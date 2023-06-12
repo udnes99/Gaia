@@ -1,10 +1,3 @@
-# Deploying Chaincode
-
-0. Make sure to be in the working directory `Fabric/
-1. First we need to setup the test network using `sudo ./network.sh up -ca`
-2. Then we create the channel `sudo ./network.sh createChannel -c main`
-3. Then deploy the ChainCode using: `sudo ./network.sh deployCC -c main -ccn basic -ccp ../../Implementation/Chaincode  -ccl typescript`
-
 
 # Documentation
 https://hyperledger.github.io/fabric-chaincode-node/main/api/
@@ -13,8 +6,16 @@ https://hyperledger.github.io/fabric-chaincode-node/main/api/
 # Peer CLI
 https://hyperledger-fabric.readthedocs.io/en/latest/commands/peerchaincode.html#peer-chaincode-invoke
 
+# Test network
+A test network can be setup by following the samples from Fabric which can be found here [here](https://github.com/hyperledger/fabric-samples).
+The following commands assume a test network that has been setup with two organizations on a channel called *main*  using the scripts from `test-network` sample provided by fabric.
+
+Remember to build and deploy the code before proceeding.
+
+
+
 ## Setup CLI (Org1)
-1. From the working directory `Fabric/test-network`, set the following env variables:
+1. From the working directory `test-network` in fabric samples set the following env variables:
 2.  
 ```
 export PATH=${PWD}/../bin:$PATH
@@ -27,7 +28,7 @@ export CORE_PEER_ADDRESS=localhost:7051
 ```
 
 ## Setup CLI (Org2)
-1. From the working directory `Fabric/test-network`, set the following env variables:
+1. From the working directory `test-network`, set the following env variables:
 2.  
 ```
 export PATH=${PWD}/../bin:$PATH
@@ -43,7 +44,7 @@ export CORE_PEER_ADDRESS=localhost:9051
 Using Peer Org 1 as the basis:
 
 ```
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}'
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C main -n basic --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}'
 ```
 
 Using Peer Org 2:
@@ -91,7 +92,7 @@ peer chaincode query -C main -n basic -c '{"Args":["Asset:getAssets"]}'
 
 ## View Sustainability Impact
 ```
-peer chaincode query -C main -n basic -c '{"Args":["Asset:getDownstreamImpact", "1"]}'
+peer chaincode query -C main -n basic -c '{"Args":["Asset:getDownstreamImpact", "<AssterId>"}'
 ```
 
 
