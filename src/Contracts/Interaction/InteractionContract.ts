@@ -106,7 +106,7 @@ export class InteractionContract extends AbstractContract
     {
         const results = [];
 
-        const iterator = ctx.stub.getPrivateDataByRange(`_implicit_org_${ctx.clientIdentity.getMSPID()}`,'interaction', "interactioo");
+        const iterator = ctx.stub.getPrivateDataByRange(this.implicitPDCOfClient(ctx), 'interaction', "interactioo");
 
         for await (const record of iterator)
         {
@@ -121,7 +121,7 @@ export class InteractionContract extends AbstractContract
     {
         const results = [];
 
-        const iterator = ctx.stub.getPrivateDataByRange(`_implicit_org_${ctx.clientIdentity.getMSPID()}`,'interaction', "interactioo");
+        const iterator = ctx.stub.getPrivateDataByRange(this.implicitPDCOfClient(ctx),'interaction', "interactioo");
 
         for await (const record of iterator)
             results.push(Buffer.from(record.value).toString("utf-8"))

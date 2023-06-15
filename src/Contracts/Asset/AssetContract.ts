@@ -149,7 +149,7 @@ export class AssetContact extends AbstractContract
     {
         const allResults = [];
         // range query with empty string for startKey and endKey does an open-ended query of all assets in the chaincode namespace.
-        const iterator = ctx.stub.getPrivateDataByRange(`_implicit_org_${ctx.clientIdentity.getMSPID()}`,'asset', "asseu");
+        const iterator = ctx.stub.getPrivateDataByRange(this.implicitPDCOfClient(ctx),'asset', "asseu");
 
         for await (const record of iterator)
         {

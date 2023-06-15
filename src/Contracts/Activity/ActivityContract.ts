@@ -42,7 +42,7 @@ export class ActivityContract extends AbstractContract
     
     private async saveActivity(ctx: Context, activity: Activity)
     {
-        await Promise.all([ctx.stub.putPrivateData(`_implicit_org_${ctx.clientIdentity.getMSPID()}`, `activity-${activity.id}`, this.serializer.serializeJSONBuffer(activity)), ctx.stub.putState(`activity-${activity.id}`, this.serializer.serializeJSONBuffer(activity.outcome))]);
+        await ctx.stub.putPrivateData(this.implicitPDCOfClient(ctx), `activity-${activity.id}`, this.serializer.serializeJSONBuffer(activity));
 
     }
 
@@ -87,25 +87,17 @@ export class ActivityContract extends AbstractContract
 
     public async getActivity(ctx: Context, id: ActivityId)
     {
-        const data = await ctx.stub.getPrivateData(`_implicit_org_${ctx.clientIdentity.getMSPID()}`, `activity-${id}`);
+        const data = await ctx.stub.getPrivateData(this.implicitPDCOfClient(ctx), `activity-${id}`);
         if(data?.length === 0)
             throw new Error("Activity with id " + id + " does not exist");
         return this.serializer.deserializeJSONBuffer(Activity, data);
     }
 
-    public async getActivityOutcome(ctx: Context, id: ActivityId) : Promise<OneOrMany<Outcome>>
-    {
-        const data = await ctx.stub.getState(`activity-${id}`);
-        if(data?.length === 0)
-            throw new Error("Activity with id " + id + " does not exist");
-        return JSON.parse(Buffer.from(data).toString("utf-8"));
-    }
-
-
+    
     public async getActivities(ctx: Context)
     {
         const allResults = [];
-        const iterator = ctx.stub.getPrivateDataByRange(`_implicit_org_${ctx.clientIdentity.getMSPID()}`,'activity', "activitz");
+        const iterator = ctx.stub.getPrivateDataByRange(this.implicitPDCOfClient(ctx),'activity', "activitz");
 
         for await (const record of iterator)
         {
@@ -117,7 +109,7 @@ export class ActivityContract extends AbstractContract
 
     public async exists(ctx: Context, id: string) : Promise<boolean>
     {
-        return this.newActivities.get(ctx.stub.getTxID()).has(id) || (await ctx.stub.getState(`activity-${id}`))?.length != 0
+        return this.newActivities.get(ctx.stub.getTxID()).has(id) || (await ctx.stub.getPrivateData(this.implicitPDCOfClient(ctx),`activity-${id}`))?.length != 0
     }
 
 

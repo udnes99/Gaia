@@ -14,6 +14,11 @@ export abstract class AbstractContract extends Contract
         this.serializer = serializer;
     }
 
+    protected implicitPDCOfClient(ctx: Context) : string
+    {
+        return `_implicit_org_${ctx.clientIdentity.getMSPID()}`
+    }
+
     constructor
     (name: string)
     {
@@ -59,6 +64,5 @@ export abstract class AbstractContract extends Contract
     {
         this.manager = manager;
     }
-
     
 }
