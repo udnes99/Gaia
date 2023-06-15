@@ -1,3 +1,6 @@
+# Gaia - A proof of concept sustainability reporting blockchain application
+This is a proof of concept implementation that I created as part of my master's thesis.
+
 
 # Documentation
 https://hyperledger.github.io/fabric-chaincode-node/main/api/
@@ -11,7 +14,6 @@ A test network can be setup by following the samples from Fabric which can be fo
 The following commands assume a test network that has been setup with two organizations on a channel called *main*  using the scripts from `test-network` sample provided by fabric.
 
 Remember to build and deploy the code before proceeding.
-
 
 
 ## Setup CLI (Org1)
