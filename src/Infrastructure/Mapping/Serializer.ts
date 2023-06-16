@@ -1,10 +1,10 @@
 
 import { AwilixContainer } from "awilix";
-
-import { IMapper, DTO } from "../../Contracts/Mapper/IMapper";
 import stringify from "json-stringify-deterministic";
-import { Class, ISerializer } from "../../Contracts/Serializer/ISerializer";
+import { Class, ISerializer } from "../../Application/Serializer/ISerializer";
 import { Schema } from "zod";
+import { DTO, IMapper } from "../../Application/Mapping/IMapper";
+
 
 
 export class Serializer implements ISerializer

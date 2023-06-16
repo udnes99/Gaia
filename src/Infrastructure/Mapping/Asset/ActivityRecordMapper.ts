@@ -1,4 +1,4 @@
-import { IMapper } from "../../../Contracts/Mapper/IMapper";
+import { IMapper } from "../../../Application/Mapping/IMapper";
 import { ActivityId } from "../../../Core/Activity/ActivityId";
 import { ActivityRecord } from "../../../Core/Asset/ActivityRecord";
 import { Consumption } from "../../../Core/Asset/Consumption";
