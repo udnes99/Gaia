@@ -2,7 +2,6 @@
 import { AwilixContainer } from "awilix";
 import stringify from "json-stringify-deterministic";
 import { Class, ISerializer } from "../../Application/Serializer/ISerializer";
-import { Schema } from "zod";
 import { DTO, IMapper } from "../../Application/Mapping/IMapper";
 
 
@@ -72,12 +71,6 @@ export class Serializer implements ISerializer
         const mapper = type.substring(0, 1).toLowerCase() + type.substring(1) + "Mapper";
         if(!this.container.hasRegistration(mapper))
             throw new Error("Missing mapper for object of type " + type);
-        const schema = this.container.resolve<Schema<unknown, unknown>>(type.substring(0,1).toLowerCase() + type.substring(1) + "Schema", {allowUnregistered: true});
-        if(!schema)
-            console.warn("Missing schema for deserialized type: ", type);
-        else
-            schema.parse(dto);
-        
         return this.container.resolve<IMapper<T, DTO<T>>>(mapper).from(dto);
     }
 
