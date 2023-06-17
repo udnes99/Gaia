@@ -1,7 +1,7 @@
 import { Outcome } from "../../../Core/Outcome/Outcome";
-import { DTO, IMapper } from "../../../Contracts/Mapper/IMapper";
 import { AwilixContainer } from "awilix";
 import { container } from "../../../index"
+import { DTO, IMapper } from "../../../Application/Mapping/IMapper";
 
 export interface OutcomeDTO extends DTO<Outcome>
 {

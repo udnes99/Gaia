@@ -1,6 +1,4 @@
-import { ActivityRegistration } from "../../Contracts/Activity/ActivityRegistration";
-import { TransferRequest } from "../../Contracts/Asset/TransferRequest";
-import { InteractionModification } from "../../Contracts/Interaction/InteractionModification";
+import { InteractionModification } from "../../Application/Commands/ModifyInteraction/InteractionModification";
 import { ActivityId } from "../Activity/ActivityId";
 import { AssetId } from "../Asset/AssetId";
 import { OrganizationId } from "../Organization/OrganizationId";
@@ -45,21 +43,38 @@ export class Interaction
         return [INTERACTION_STATE.CONFIRMED, INTERACTION_STATE.DECLINED, INTERACTION_STATE.CANCELLED].includes(this._state)
     }
 
-    public confirm()
+    private ensurePartOfInteraction(actor: OrganizationId)
     {
+
+    }
+
+    public confirm(confirmedBy : OrganizationId)
+    {
+        this.ensurePartOfInteraction(confirmedBy);
         this.ensureNotCompleted();
+
+        if((confirmedBy === this.from && this._state !== INTERACTION_STATE.RECEIVER_REPROPOSAL) || (confirmedBy === this.to && ![INTERACTION_STATE.PROPOSED, INTERACTION_STATE.SENDER_REPROPOSAL].includes(this._state)))
+            throw new Error("Interaction cannot be confirmed by the last party that proposed or modified it.");
+        
+            
         this._state = INTERACTION_STATE.CONFIRMED;
     }
 
-    public decline()
+    public decline(declinedBy: OrganizationId)
     {
+        this.ensurePartOfInteraction(declinedBy);
         this.ensureNotCompleted();
+        if((declinedBy === this.from && this._state !== INTERACTION_STATE.RECEIVER_REPROPOSAL) || (declinedBy === this.to && ![INTERACTION_STATE.PROPOSED, INTERACTION_STATE.SENDER_REPROPOSAL].includes(this._state)))
+            throw new Error("Interaction cannot be declined by the last party that proposed or modified it.");
         this._state = INTERACTION_STATE.DECLINED;
     }
 
-    public cancel()
+    public cancel(cancelledBy : OrganizationId)
     {
+        this.ensurePartOfInteraction(cancelledBy);
         this.ensureNotCompleted();
+        if((cancelledBy === this.from && ![INTERACTION_STATE.SENDER_REPROPOSAL, INTERACTION_STATE.PROPOSED].includes(this._state)) || (cancelledBy === this.to && this._state !== INTERACTION_STATE.RECEIVER_REPROPOSAL))
+            throw new Error("Interaction cannot be declined by the last party that proposed or modified it.");
         this._state = INTERACTION_STATE.CANCELLED;
     }
 

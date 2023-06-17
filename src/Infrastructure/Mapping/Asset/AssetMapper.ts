@@ -1,5 +1,5 @@
-import { DTO, IMapper } from "../../../Contracts/Mapper/IMapper";
 import { ActivityId } from "../../../Core/Activity/ActivityId";
+import { DTO, IMapper } from "../../../Application/Mapping/IMapper";
 import { ActivityRecord } from "../../../Core/Asset/ActivityRecord";
 import { Asset } from "../../../Core/Asset/Asset";
 import { Consumption } from "../../../Core/Asset/Consumption";

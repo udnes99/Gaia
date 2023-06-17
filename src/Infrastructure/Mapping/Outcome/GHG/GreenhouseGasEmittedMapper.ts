@@ -1,5 +1,5 @@
+import { IMapper } from "../../../../Application/Mapping/IMapper";
 import { GreenhouseGasEmitted, GREEN_HOUSE_GAS_TYPE, GREEN_HOUSE_GAS_UNIT } from "../../../../Core/Outcome/GHG/GreenhouseGasEmitted";
-import { IMapper } from "../../../../Contracts/Mapper/IMapper";
 import { OutcomeDTO } from "../OutcomeMapper";
 
 export interface GreenhouseGasEmittedDTO extends OutcomeDTO

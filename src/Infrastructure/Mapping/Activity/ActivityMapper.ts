@@ -1,21 +1,10 @@
-import { DTO, IMapper } from "../../../Contracts/Mapper/IMapper";
+import { ActivityDTO } from "../../../Application/Contracts/DTO/ActivityDTO";
+import { IMapper } from "../../../Application/Mapping/IMapper";
 import { Activity } from "../../../Core/Activity/Activity";
-import { ActivityId } from "../../../Core/Activity/ActivityId";
 import { Outcome } from "../../../Core/Outcome/Outcome";
-import { OneOrMany } from "../../../Types/OneOrMany";
-import { PrimitiveObject } from "../../../Types/PrimitiveField";
 import { OutcomeDTO } from "../Outcome/OutcomeMapper";
 
-export interface ActivityDTO extends DTO<Activity>
-{
-    id: string,
-    type: string,
-    outcome: OneOrMany<OutcomeDTO>,
-    description?: string,
-    activities?: ActivityId[]
-    data?: PrimitiveObject,
-    assets: number
-}
+
 export default class ActivityMapper implements IMapper<Activity, ActivityDTO>
 {
     constructor

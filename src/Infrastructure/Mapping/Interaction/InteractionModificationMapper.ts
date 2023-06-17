@@ -1,21 +1,15 @@
-import { ActivityRegistration } from "../../../Contracts/Activity/ActivityRegistration";
-import { InteractionModification } from "../../../Contracts/Interaction/InteractionModification";
-import { IMapper } from "../../../Contracts/Mapper/IMapper";
+import { InteractionDTO } from "../../../Application/Contracts/DTO/InteractionDTO";
+import { InteractionModificationDTO } from "../../../Application/Contracts/DTO/InteractionModificationDTO";
+import { InteractionModification } from "../../../Application/Commands/ModifyInteraction/InteractionModification";
 import { Interaction } from "../../../Core/Interaction/Interaction";
-import { ActivityRegistrationDTO } from "../Activity/ActivityRegistrationMapper";
-import { InteractionDTO } from "./InteractionMapper";
+import { IMapper } from "../../../Application/Mapping/IMapper";
 
 
-export interface InteractionModificationDTO
-{
-    interaction: InteractionDTO,
-    activities?: {remove?: string[], register?: string[]}
-}
+
 export default class InteractionModificationMapper implements IMapper<InteractionModification, InteractionModificationDTO>
 {
     constructor
     (
-        private readonly activityRegistrationMapper: IMapper<ActivityRegistration, ActivityRegistrationDTO>,
         private readonly interactionMapper: IMapper<Interaction, InteractionDTO>
     ) {}
     public to(obj: InteractionModification): InteractionModificationDTO 
