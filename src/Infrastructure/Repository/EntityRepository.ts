@@ -4,8 +4,12 @@ import { Entity } from "../../Core/Entity";
 import { OneOrNone } from "../../Types/OneOrMany";
 import { PrimitiveField } from "../../Types/PrimitiveField";
 import { Serializer } from "../Mapping/Serializer";
+import { createHash } from "crypto"
+
 
 export type Query = Record<string, PrimitiveField>
+
+import stringify from "json-stringify-deterministic";
 
 export abstract class EntityRepository<T extends Entity>
 {
@@ -80,17 +84,17 @@ export abstract class EntityRepository<T extends Entity>
     
     protected async queryImplicit(query? : Query) : Promise<T[]>
     {
-        return  await  this.iteratorToEntities(this.ctx.stub.getPrivateDataQueryResult(this.getImplicitPrivateDataCollection(), JSON.stringify({selector: {...query, "~type": this.getEntityType()}}))); 
+        return  await  this.iteratorToEntities(this.ctx.stub.getPrivateDataQueryResult(this.getImplicitPrivateDataCollection(), stringify({selector: {...query, "~type": this.getEntityType()}}))); 
     }
 
     protected async queryPublic( query : Query) : Promise<T[]>
     {
-        return  await  this.iteratorToEntities(this.ctx.stub.getQueryResult(JSON.stringify({selector: {...query, "~type": this.getEntityType()}}))); 
+        return  await  this.iteratorToEntities(this.ctx.stub.getQueryResult(stringify({selector: {...query, "~type": this.getEntityType()}}))); 
     }
 
     protected async queryPrivate(collection: string, query: Query) : Promise<T[]>
     {
-        return await this.iteratorToEntities(this.ctx.stub.getPrivateDataQueryResult(collection,JSON.stringify({selector: {...query, "~type": this.getEntityType()}})));
+        return await this.iteratorToEntities(this.ctx.stub.getPrivateDataQueryResult(collection, stringify({selector: {...query, "~type": this.getEntityType()}})));
     }
 
     private cacheSave(collection: string, entities: T[])
@@ -111,47 +115,54 @@ export abstract class EntityRepository<T extends Entity>
         }   
     }
 
+    protected computeHashOf(entity: T)
+    {
+        const sha256 = createHash("sha256");
+        sha256.update(this.entityToBuffer(entity));
+        return sha256.digest();
+    }
+
     private entityToBuffer(entity: T)
     {
         const dto = this.serializer.serialize(entity);
         dto["~type"] = this.getEntityType();
-        return Buffer.from(JSON.stringify(dto));
+        return Buffer.from(stringify(dto));
     }
 
     protected async saveImplicit(...entities: T[])
     {
-        this.cacheSave(this.getImplicitPrivateDataCollection(), entities);
         await Promise.all(entities.map(x => this.ctx.stub.putPrivateData(this.getImplicitPrivateDataCollection(), x.id, this.entityToBuffer(x))));
+        this.cacheSave(this.getImplicitPrivateDataCollection(), entities);
     }
 
     protected async savePublic(...entities: T[])
     {
-        this.cacheSave("", entities);
         await Promise.all(entities.map(x => this.ctx.stub.putState(x.id, this.entityToBuffer(x))))
+        this.cacheSave("", entities);
     }
 
     protected async savePrivate(collection: string, ...entities: T[])
     {
-        this.cacheSave(collection, entities);
         await Promise.all(entities.map(x => this.ctx.stub.putPrivateData(collection, x.id, this.entityToBuffer(x))));
+        this.cacheSave(collection, entities);
     }
 
     protected async deleteImplicit(entities: T[])
     {
-        this.cacheDeletion(this.getImplicitPrivateDataCollection(), entities);
         await Promise.all(entities.map(x => this.ctx.stub.deletePrivateData(this.getImplicitPrivateDataCollection(), x.id)));
+        this.cacheDeletion(this.getImplicitPrivateDataCollection(), entities);
     }
 
     protected async deletePublic(entities: T[])
     {
-        this.cacheDeletion("", entities);
         await Promise.all(entities.map(x => this.ctx.stub.deleteState(x.id)));
+        this.cacheDeletion("", entities);
     }
 
     protected async deletePrivate(collection: string, entities: T[])
     {
-        this.cacheDeletion(collection, entities);
         await Promise.all(entities.map(x => this.ctx.stub.deletePrivateData(collection, x.id)));
+        this.cacheDeletion(collection, entities);
     }
 
 
@@ -163,7 +174,7 @@ export abstract class EntityRepository<T extends Entity>
             const data = JSON.parse(Buffer.from(res.value).toString("utf-8"));
             if(data["~type"] !== this.getEntityType())
                 continue;
-            const entity = this.serializer.deserialize<T>(this.getEntityType(),data)
+            const entity = this.serializer.deserialize<T>(this.getEntityType(), data)
             results.push(entity);
         }
         return results;
