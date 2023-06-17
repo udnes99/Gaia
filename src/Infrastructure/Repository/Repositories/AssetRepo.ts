@@ -5,6 +5,9 @@ import { EntityRepository } from "../EntityRepository";
 
 export default class AssetRepo extends EntityRepository<Asset> implements IAssetRepo
 {
+    public getAll(): Promise<Asset[]> {
+        return this.getAllImplicit();
+    }
     public async exists(id: string): Promise<boolean> {
         return this.existsImplicit(id);
     }
