@@ -14,6 +14,5 @@ container.loadModules([`${path}/Infrastructure/Validation/Schemas/*Schema.{js,ts
 container.loadModules([`${path}/Application/+(Commands|Queries|Handlers|Responses)/**/*Handler.{ts,js}`], { resolverOptions: { lifetime: Lifetime.SCOPED } });
 container.loadModules([`${path}/Infrastructure/Repository/**/*Repo.{js,ts}`], {formatName: "camelCase", resolverOptions: {lifetime: Lifetime.SCOPED}})
 
-Object.keys(container.registrations).forEach(x=> console.log(x))
 AppContract.setContainer(container);
 export const contracts = [AppContract]
