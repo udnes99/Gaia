@@ -23,7 +23,7 @@ export class AppContract extends Contract
         if(!query)
             throw new Error("Query not specified.");
 
-        console.log("Executing query ", query)
+        ctx.logging.getLogger().info("Executing query " + query)
         const executionScope = AppContract.container.createScope();
         executionScope.register({container: asValue(executionScope)});
         executionScope.register({ctx: asValue(ctx)});
@@ -54,10 +54,8 @@ export class AppContract extends Contract
         const commandHandler : ICommandHandler<ICommand<unknown>, unknown> = executionScope.resolve(command.concat("CommandHandler"), {allowUnregistered: true});
         if(!commandHandler)
             throw new Error("Unknown command " +  command)
+        ctx.logging.getLogger().info("Executing command " + command)
         const payload : unknown =  transientMap.has("payload") ? JSON.parse(Buffer.from(transientMap.get("payload")).toString("utf-8")) : {};
-        console.log("Executing command", command)
-        console.log(payload)
-        console.log(JSON.stringify(payload))
         return await commandHandler.handle(<ICommand<unknown>>payload);
     }
 }
